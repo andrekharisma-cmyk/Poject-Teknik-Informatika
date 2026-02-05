@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistem Manajemen Penjualan Toko UMKM</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#111a33;
+      --card2:#0f1730;
+      --muted:#9fb0ffcc;
+      --text:#e9eeff;
+      --accent:#6aa6ff;
+      --accent2:#7bffcf;
+      --danger:#ff6a6a;
+      --warning:#ffd36a;
+      --ok:#6aff8c;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --radius2:14px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font);
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(106,166,255,.25), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(123,255,207,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    .container{max-width:1200px; margin:0 auto; padding:24px;}
+    .hidden{display:none !important;}
+
+    /* ---------- Auth ---------- */
+    .auth-wrap{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+    .auth-card{
+      width:min(980px, 100%);
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .auth-left{
+      padding:28px;
+      background: linear-gradient(135deg, rgba(106,166,255,.18), rgba(123,255,207,.10));
+      border-right:1px solid var(--border);
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; margin-bottom:14px;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 18px rgba(106,166,255,.25);
+    }
+    .brand h1{font-size:18px; margin:0}
+    .brand p{margin:0; color:var(--muted); font-size:13px}
+    .auth-left h2{margin:18px 0 8px; font-size:30px; line-height:1.1}
+    .auth-left .desc{color:var(--muted); margin:0 0 18px}
+    .feature{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:14px;
+    }
+    .pill{
+      padding:12px 12px;
+      border:1px solid var(--border);
+      border-radius: var(--radius2);
+      background: rgba(17,26,51,.30);
+    }
+    .pill b{display:block; font-size:13px}
+    .pill span{display:block; color:var(--muted); font-size:12px; margin-top:4px}
+
+    .auth-right{padding:28px; background: rgba(17,26,51,.50);}
+    .card-title{margin:0 0 6px; font-size:18px}
+    .card-sub{margin:0 0 18px; color:var(--muted); font-size:13px}
+
+    .form{
+      display:grid; gap:12px;
+    }
+    label{font-size:12px; color:var(--muted)}
+    .input{
+      width:100%;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(15,23,48,.70);
+      color:var(--text);
+      outline:none;
+    }
+    .row{display:flex; justify-content:space-between; align-items:center; gap:10px}
+    .btn{
+      padding:12px 14px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: linear-gradient(135deg, rgba(106,166,255,.95), rgba(123,255,207,.85));
+      color:#071022;
+      font-weight:700;
+      cursor:pointer;
+      transition:.15s transform ease;
+    }
+    .btn:active{transform:scale(.98)}
+    .btn.ghost{
+      background: transparent;
+      color:var(--text);
+    }
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+
+    /* ---------- App Layout ---------- */
+    .app{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+    }
+    .sidebar{
+      position:sticky; top:0; height:100vh;
+      padding:18px;
+      border-right:1px solid var(--border);
+      background: rgba(10,16,35,.65);
+      backdrop-filter: blur(10px);
+    }
+    .sb-head{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .sb-user{
+      display:flex; gap:10px; align-items:center;
+      padding:10px 10px;
+      border:1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(17,26,51,.35);
+    }
+    .avatar{
+      width:36px; height:36px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(106,166,255,.85), rgba(123,255,207,.70));
+    }
+    .sb-user b{display:block; font-size:13px}
+    .sb-user span{display:block; font-size:12px; color:var(--muted)}
+    .nav{
+      margin-top:14px;
+      display:grid;
+      gap:8px;
+    }
+    .nav a{
+      display:flex; align-items:center; gap:10px;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid transparent;
+      color:var(--text);
+      background: transparent;
+    }
+    .nav a:hover{background: rgba(255,255,255,.04); border-color: var(--border);}
+    .nav a.active{
+      background: rgba(106,166,255,.14);
+      border-color: rgba(106,166,255,.35);
+    }
+    .icon{
+      width:22px; height:22px; display:grid; place-items:center;
+      border-radius: 10px;
+      background: rgba(255,255,255,.05);
+      border:1px solid var(--border);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .sb-footer{
+      position:absolute;
+      left:18px; right:18px; bottom:18px;
+      display:grid; gap:10px;
+    }
+
+    .main{
+      padding:22px;
+    }
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .search{
+      flex:1;
+      display:flex; align-items:center; gap:10px;
+      padding:12px 12px;
+      border-radius: 16px;
+      border:1px solid var(--border);
+      background: rgba(17,26,51,.35);
+      max-width: 560px;
+    }
+    .search input{
+      width:100%;
+      border:none;
+      background: transparent;
+      color:var(--text);
+      outline:none;
+    }
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .card{
+      background: rgba(17,26,51,.45);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      padding:16px;
+      overflow:hidden;
+    }
+    .card h3{margin:0 0 8px; font-size:14px; color:var(--muted); font-weight:600}
+    .metric{
+      display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+    }
+    .metric b{font-size:26px; letter-spacing:.2px}
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .badge.ok{color:rgba(106,255,140,.95); border-color:rgba(106,255,140,.25)}
+    .badge.warn{color:rgba(255,211,106,.95); border-color:rgba(255,211,106,.25)}
+    .badge.bad{color:rgba(255,106,106,.95); border-color:rgba(255,106,106,.25)}
+
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0 10px;
+    }
+    .table th{
+      text-align:left;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:600;
+      padding:0 10px 8px;
+    }
+    .table td{
+      padding:12px 10px;
+      background: rgba(15,23,48,.75);
+      border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+      font-size:13px;
+    }
+    .table tr td:first-child{
+      border-left:1px solid var(--border);
+      border-top-left-radius:14px;
+      border-bottom-left-radius:14px;
+    }
+    .table tr td:last-child{
+      border-right:1px solid var(--border);
+      border-top-right-radius:14px;
+      border-bottom-right-radius:14px;
+      text-align:right;
+    }
+    .btn-sm{
+      padding:8px 10px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+      font-size:12px;
+    }
+    .btn-sm.primary{
+      background: rgba(106,166,255,.16);
+      border-color: rgba(106,166,255,.35);
+    }
+    .btn-sm.danger{
+      background: rgba(255,106,106,.10);
+      border-color: rgba(255,106,106,.28);
+    }
+
+    .two-col{display:grid; grid-template-columns: 1fr 1fr; gap:14px;}
+    .form-grid{display:grid; gap:10px; grid-template-columns: repeat(2, 1fr);}
+    .form-grid .full{grid-column: 1 / -1;}
+    .muted{color:var(--muted); font-size:13px}
+    .section-title{
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+      margin:4px 0 10px;
+    }
+    .section-title h2{margin:0; font-size:18px}
+    .divider{height:1px; background: var(--border); margin:12px 0;}
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 980px){
+      .auth-card{grid-template-columns:1fr}
+      .auth-left{border-right:none; border-bottom:1px solid var(--border)}
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative; height:auto}
+      .sb-footer{position:relative; left:0; right:0; bottom:0; margin-top:10px}
+      .two-col{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+      .search{max-width:100%}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================== LOGIN ================== -->
+  <section id="auth" class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-left">
+        <div class="brand">
+          <div class="logo"></div>
+          <div>
+            <h1>Sistem Manajemen Penjualan</h1>
+            <p>Toko UMKM • Web Dashboard</p>
+          </div>
+        </div>
+
+        <h2>Kelola barang, stok, transaksi, dan laporan dalam satu tempat.</h2>
+        <p class="desc">Anda Puas Kami Senang, Anda Senang Kami Tenang.</p>
+
+        <div class="feature">
+          <div class="pill"><b>Stok Real-time</b><span>Stok otomatis berkurang saat transaksi.</span></div>
+          <div class="pill"><b>Laporan Otomatis</b><span>Harian • Mingguan • Bulanan.</span></div>
+          <div class="pill"><b>Multi Role</b><span>Admin & Kasir.</span></div>
+          <div class="pill"><b>Transaksi Cepat</b><span>Tambah item, hitung total, selesai.</span></div>
+        </div>
+      </div>
+
+      <div class="auth-right">
+        <h3 class="card-title">Masuk</h3>
+        <p class="card-sub">Gunakan akun demo (tanpa backend).</p>
+
+        <div class="form">
+          <div>
+            <label>Email / Username</label>
+            <input class="input" id="loginUser" value="admin@toko.com" />
+          </div>
+          <div>
+            <label>Password</label>
+            <input class="input" id="loginPass" type="password" value="admin123" />
+          </div>
+          <div class="row">
+            <span class="hint">Demo: admin@toko.com / admin123</span>
+            <button class="btn" onclick="fakeLogin()">Login</button>
+          </div>
+          <div class="divider"></div>
+          <button class="btn ghost" onclick="fillKasir()">Coba akun Kasir</button>
+          <p class="hint">Kasir: kasir@toko.com / kasir123</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== APP ================== -->
+  <section id="app" class="app hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sb-head">
+        <div class="brand" style="margin:0;">
+          <div class="logo" style="width:36px;height:36px;border-radius:12px;"></div>
+          <div>
+            <h1 style="margin:0;font-size:14px;">Penjualan UMKM</h1>
+            <p style="margin:0;color:var(--muted);font-size:12px;">Dashboard</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sb-user">
+        <div class="avatar"></div>
+        <div>
+          <b id="roleName">Admin</b>
+          <span id="roleEmail">admin@toko.com</span>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <a href="#" data-page="dashboard" class="active"><span class="icon">🏠</span>Dashboard</a>
+        <a href="#" data-page="barang"><span class="icon">📦</span>Data Barang</a>
+        <a href="#" data-page="transaksi"><span class="icon">🧾</span>Transaksi</a>
+        <a href="#" data-page="laporan"><span class="icon">📊</span>Laporan</a>
+        <a href="#" data-page="pengguna"><span class="icon">👤</span>Pengguna</a>
+        <a href="#" data-page="pengaturan"><span class="icon">⚙️</span>Pengaturan</a>
+      </nav>
+
+      <div class="sb-footer">
+        <button class="btn-sm" onclick="toggleTheme()">Toggle Mode</button>
+        <button class="btn-sm danger" onclick="logout()">Logout</button>
+        <div class="hint">.</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <div class="search">
+          <span class="icon" style="border-radius:999px;">🔎</span>
+          <input placeholder="Cari barang / transaksi..." />
+        </div>
+        <div class="chips">
+          <span class="chip">Tanggal: <span id="today"></span></span>
+          <span class="chip">Status: Online</span>
+        </div>
+      </div>
+
+      <!-- ====== DASHBOARD ====== -->
+      <section id="page-dashboard" class="page">
+        <div class="section-title">
+          <h2>Dashboard</h2>
+          <button class="btn-sm primary" onclick="toast('Data dashboard diperbarui (demo).')">Refresh</button>
+        </div>
+
+        <div class="grid">
+          <div class="card" style="grid-column: span 3;">
+            <h3>Total Penjualan (Hari Ini)</h3>
+            <div class="metric">
+              <b>Rp 1.250.000</b>
+              <span class="badge ok">+12%</span>
+            </div>
+          </div>
+          <div class="card" style="grid-column: span 3;">
+            <h3>Transaksi</h3>
+            <div class="metric">
+              <b>34</b>
+              <span class="badge">target 50</span>
+            </div>
+          </div>
+          <div class="card" style="grid-column: span 3;">
+            <h3>Barang Hampir Habis</h3>
+            <div class="metric">
+              <b>6</b>
+              <span class="badge warn">cek stok</span>
+            </div>
+          </div>
+          <div class="card" style="grid-column: span 3;">
+            <h3>Keuntungan Estimasi</h3>
+            <div class="metric">
+              <b>Rp 310.000</b>
+              <span class="badge ok">stabil</span>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 7;">
+            <h3>Transaksi Terbaru</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Kode</th><th>Waktu</th><th>Item</th><th>Total</th><th>Status</th><th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>TRX-0012</td><td>10:12</td><td>5</td><td>Rp 75.000</td><td><span class="badge ok">Selesai</span></td>
+                  <td>
+                    <button class="btn-sm" onclick="toast('Buka detail TRX-0012 (demo).')">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>TRX-0011</td><td>10:01</td><td>2</td><td>Rp 18.000</td><td><span class="badge ok">Selesai</span></td>
+                  <td><button class="btn-sm" onclick="toast('Buka detail TRX-0011 (demo).')">Detail</button></td>
+                </tr>
+                <tr>
+                  <td>TRX-0010</td><td>09:44</td><td>7</td><td>Rp 122.000</td><td><span class="badge warn">Menunggu</span></td>
+                  <td><button class="btn-sm primary" onclick="toast('Konfirmasi TRX-0010 (demo).')">Konfirmasi</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card" style="grid-column: span 5;">
+            <h3>Barang Hampir Habis</h3>
+            <table class="table">
+              <thead><tr><th>Nama</th><th>Stok</th><th>Minimum</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr><td>Gula 1kg</td><td>3</td><td>5</td><td><button class="btn-sm primary" onclick="toast('Restok Gula (demo).')">Restok</button></td></tr>
+                <tr><td>Minyak 1L</td><td>2</td><td>4</td><td><button class="btn-sm primary" onclick="toast('Restok Minyak (demo).')">Restok</button></td></tr>
+                <tr><td>Mie Instan</td><td>8</td><td>10</td><td><button class="btn-sm" onclick="toast('Lihat Mie (demo).')">Lihat</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== DATA BARANG ====== -->
+      <section id="page-barang" class="page hidden">
+        <div class="section-title">
+          <h2>Data Barang</h2>
+          <button class="btn-sm primary" onclick="toast('Tambah barang (demo).')">+ Tambah Barang</button>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <h3>Daftar Barang</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Kode</th><th>Nama</th><th>Kategori</th><th>Stok</th><th>Harga</th><th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>BRG-0001</td><td>Beras 5kg</td><td>Sembako</td><td>12</td><td>Rp 68.000</td>
+                  <td>
+                    <button class="btn-sm" onclick="toast('Edit BRG-0001 (demo).')">Edit</button>
+                    <button class="btn-sm danger" onclick="toast('Hapus BRG-0001 (demo).')">Hapus</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BRG-0002</td><td>Mie Instan</td><td>Makanan</td><td>80</td><td>Rp 3.500</td>
+                  <td>
+                    <button class="btn-sm" onclick="toast('Edit BRG-0002 (demo).')">Edit</button>
+                    <button class="btn-sm danger" onclick="toast('Hapus BRG-0002 (demo).')">Hapus</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BRG-0003</td><td>Minyak 1L</td><td>Sembako</td><td>2</td><td>Rp 16.500</td>
+                  <td>
+                    <button class="btn-sm" onclick="toast('Edit BRG-0003 (demo).')">Edit</button>
+                    <button class="btn-sm danger" onclick="toast('Hapus BRG-0003 (demo).')">Hapus</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h3>Form Barang</h3>
+            <div class="muted">Isi ini untuk demo UI. Nanti tinggal kamu sambungkan ke backend + database.</div>
+            <div class="divider"></div>
+
+            <div class="form-grid">
+              <div>
+                <label>Kode Barang</label>
+                <input class="input" placeholder="BRG-0004" />
+              </div>
+              <div>
+                <label>Kategori</label>
+                <select class="input">
+                  <option>Sembako</option>
+                  <option>Makanan</option>
+                  <option>Minuman</option>
+                  <option>Rumah Tangga</option>
+                </select>
+              </div>
+              <div class="full">
+                <label>Nama Barang</label>
+                <input class="input" placeholder="Contoh: Gula 1kg" />
+              </div>
+              <div>
+                <label>Stok</label>
+                <input class="input" type="number" placeholder="0" />
+              </div>
+              <div>
+                <label>Harga Jual</label>
+                <input class="input" placeholder="Rp 0" />
+              </div>
+              <div class="full row">
+                <button class="btn-sm primary" onclick="toast('Simpan barang (demo).')">Simpan</button>
+                <button class="btn-sm" onclick="toast('Reset form (demo).')">Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== TRANSAKSI ====== -->
+      <section id="page-transaksi" class="page hidden">
+        <div class="section-title">
+          <h2>Transaksi Penjualan</h2>
+          <button class="btn-sm primary" onclick="toast('Transaksi disimpan (demo).')">Simpan Transaksi</button>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <h3>Tambah Item</h3>
+            <div class="form-grid">
+              <div class="full">
+                <label>Cari Barang</label>
+                <input class="input" placeholder="Ketik nama barang..." />
+              </div>
+              <div>
+                <label>Qty</label>
+                <input class="input" type="number" value="1" />
+              </div>
+              <div>
+                <label>Diskon</label>
+                <input class="input" placeholder="0%" />
+              </div>
+              <div class="full row">
+                <button class="btn-sm primary" onclick="toast('Item ditambahkan (demo).')">+ Tambah ke Keranjang</button>
+                <button class="btn-sm" onclick="toast('Scan barcode (dummy).')">Scan (demo)</button>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3>Keranjang</h3>
+            <table class="table">
+              <thead><tr><th>Barang</th><th>Qty</th><th>Harga</th><th>Subtotal</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr><td>Mie Instan</td><td>5</td><td>Rp 3.500</td><td>Rp 17.500</td><td><button class="btn-sm danger" onclick="toast('Item dihapus (demo).')">Hapus</button></td></tr>
+                <tr><td>Minyak 1L</td><td>1</td><td>Rp 16.500</td><td>Rp 16.500</td><td><button class="btn-sm danger" onclick="toast('Item dihapus (demo).')">Hapus</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h3>Ringkasan</h3>
+            <div class="divider"></div>
+            <div class="row"><span class="muted">Total Item</span><b>6</b></div>
+            <div class="row"><span class="muted">Subtotal</span><b>Rp 34.000</b></div>
+            <div class="row"><span class="muted">Diskon</span><b>Rp 0</b></div>
+            <div class="divider"></div>
+            <div class="row" style="align-items:center;">
+              <span class="muted" style="font-size:14px;">TOTAL BAYAR</span>
+              <b style="font-size:28px;">Rp 34.000</b>
+            </div>
+
+            <div class="divider"></div>
+            <div class="form-grid">
+              <div class="full">
+                <label>Metode Pembayaran</label>
+                <select class="input">
+                  <option>Tunai</option>
+                  <option>QRIS</option>
+                  <option>Transfer</option>
+                </select>
+              </div>
+              <div>
+                <label>Uang Dibayar</label>
+                <input class="input" placeholder="Rp 50.000" />
+              </div>
+              <div>
+                <label>Kembalian</label>
+                <input class="input" placeholder="Rp 16.000" disabled />
+              </div>
+              <div class="full row">
+                <button class="btn" onclick="toast('Cetak struk (demo).')">Cetak Struk</button>
+                <button class="btn-sm" onclick="toast('Batal transaksi (demo).')">Batal</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== LAPORAN ====== -->
+      <section id="page-laporan" class="page hidden">
+        <div class="section-title">
+          <h2>Laporan Penjualan</h2>
+          <div class="row">
+            <button class="btn-sm" onclick="toast('Export PDF (demo).')">Export PDF</button>
+            <button class="btn-sm primary" onclick="toast('Export Excel (demo).')">Export Excel</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card" style="grid-column: span 4;">
+            <h3>Filter Tanggal</h3>
+            <div class="form-grid">
+              <div>
+                <label>Dari</label>
+                <input class="input" type="date"/>
+              </div>
+              <div>
+                <label>Sampai</label>
+                <input class="input" type="date"/>
+              </div>
+              <div class="full">
+                <label>Jenis Laporan</label>
+                <select class="input">
+                  <option>Harian</option>
+                  <option>Mingguan</option>
+                  <option>Bulanan</option>
+                </select>
+              </div>
+              <div class="full row">
+                <button class="btn-sm primary" onclick="toast('Terapkan filter (demo).')">Terapkan</button>
+                <button class="btn-sm" onclick="toast('Reset filter (demo).')">Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 8;">
+            <h3>Ringkasan Laporan</h3>
+            <div class="grid" style="margin-top:8px;">
+              <div class="card" style="grid-column: span 4; background: rgba(15,23,48,.55);">
+                <h3>Total Penjualan</h3>
+                <div class="metric"><b>Rp 12.450.000</b><span class="badge ok">+5%</span></div>
+              </div>
+              <div class="card" style="grid-column: span 4; background: rgba(15,23,48,.55);">
+                <h3>Total Transaksi</h3>
+                <div class="metric"><b>420</b><span class="badge">bulan ini</span></div>
+              </div>
+              <div class="card" style="grid-column: span 4; background: rgba(15,23,48,.55);">
+                <h3>Produk Terlaris</h3>
+                <div class="metric"><b>Mie Instan</b><span class="badge ok">1.250 pcs</span></div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3>Detail Penjualan</h3>
+            <table class="table">
+              <thead><tr><th>Tanggal</th><th>Kode</th><th>Kasir</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr><td>2025-12-17</td><td>TRX-0123</td><td>Kasir A</td><td>Rp 75.000</td><td><span class="badge ok">Selesai</span></td><td><button class="btn-sm">Detail</button></td></tr>
+                <tr><td>2025-12-16</td><td>TRX-0119</td><td>Kasir B</td><td>Rp 43.000</td><td><span class="badge ok">Selesai</span></td><td><button class="btn-sm">Detail</button></td></tr>
+                <tr><td>2025-12-15</td><td>TRX-0110</td><td>Kasir A</td><td>Rp 128.000</td><td><span class="badge warn">Pending</span></td><td><button class="btn-sm primary">Konfirmasi</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== PENGGUNA ====== -->
+      <section id="page-pengguna" class="page hidden">
+        <div class="section-title">
+          <h2>Manajemen Pengguna</h2>
+          <button class="btn-sm primary" onclick="toast('Tambah pengguna (demo).')">+ Tambah Pengguna</button>
+        </div>
+
+        <div class="card">
+          <h3>Daftar Pengguna</h3>
+          <table class="table">
+            <thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody>
+              <tr><td>Admin Utama</td><td>admin@toko.com</td><td>Admin</td><td><span class="badge ok">Aktif</span></td>
+                <td><button class="btn-sm">Edit</button> <button class="btn-sm danger">Nonaktifkan</button></td></tr>
+              <tr><td>Kasir A</td><td>kasir@toko.com</td><td>Kasir</td><td><span class="badge ok">Aktif</span></td>
+                <td><button class="btn-sm">Edit</button> <button class="btn-sm danger">Nonaktifkan</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====== PENGATURAN ====== -->
+      <section id="page-pengaturan" class="page hidden">
+        <div class="section-title">
+          <h2>Pengaturan Toko</h2>
+          <button class="btn-sm primary" onclick="toast('Pengaturan disimpan (demo).')">Simpan</button>
+        </div>
+
+        <div class="card">
+          <h3>Profil Toko</h3>
+          <div class="form-grid" style="margin-top:10px;">
+            <div class="full">
+              <label>Nama Toko</label>
+              <input class="input" value="Toko UMKM Maju Bersama"/>
+            </div>
+            <div class="full">
+              <label>Alamat</label>
+              <input class="input" value="Jl. Contoh No. 123"/>
+            </div>
+            <div>
+              <label>No. Telepon</label>
+              <input class="input" value="0812xxxxxxx"/>
+            </div>
+            <div>
+              <label>Pajak</label>
+              <input class="input" value="0%"/>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Toast -->
+      <div id="toast" class="hidden" style="
+        position:fixed; right:18px; bottom:18px;
+        background: rgba(17,26,51,.85);
+        border:1px solid var(--border);
+        border-radius: 14px;
+        padding:12px 14px;
+        box-shadow: var(--shadow);
+        color:var(--text);
+        max-width: 320px;
+      "></div>
+    </main>
+  </section>
+
+  <script>
+    // ===== Helpers
+    const $ = (id) => document.getElementById(id);
+
+    function toast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.remove("hidden");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=> t.classList.add("hidden"), 2200);
+    }
+
+    // ===== Auth demo
+    function fillKasir(){
+      $("loginUser").value = "kasir@toko.com";
+      $("loginPass").value = "kasir123";
+      toast("Akun kasir terisi.");
+    }
+
+    function fakeLogin(){
+      const u = $("loginUser").value.trim();
+      const p = $("loginPass").value.trim();
+
+      const isAdmin = (u === "admin@toko.com" && p === "admin123");
+      const isKasir = (u === "kasir@toko.com" && p === "kasir123");
+
+      if(!isAdmin && !isKasir){
+        toast("Login gagal (demo). Coba akun admin/kasir.");
+        return;
+      }
+
+      $("auth").classList.add("hidden");
+      $("app").classList.remove("hidden");
+
+      $("roleEmail").textContent = u;
+      $("roleName").textContent = isAdmin ? "Admin" : "Kasir";
+
+      // Jika kasir, sembunyikan menu pengguna & pengaturan (contoh role-based UI)
+      document.querySelector('[data-page="pengguna"]').style.display = isKasir ? "none" : "flex";
+      document.querySelector('[data-page="pengaturan"]').style.display = isKasir ? "none" : "flex";
+
+      showPage("dashboard");
+      toast("Berhasil login (demo).");
+    }
+
+    function logout(){
+      $("app").classList.add("hidden");
+      $("auth").classList.remove("hidden");
+      toast("Logout.");
+    }
+
+    // ===== Navigation
+    const nav = document.getElementById("nav");
+    nav.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-page]");
+      if(!a) return;
+      e.preventDefault();
+      showPage(a.dataset.page);
+
+      nav.querySelectorAll("a").forEach(x=>x.classList.remove("active"));
+      a.classList.add("active");
+    });
+
+    function showPage(page){
+      document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+      const el = document.getElementById("page-" + page);
+      if(el) el.classList.remove("hidden");
+    }
+
+    // ===== Date chip
+    (function setToday(){
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      $("today").textContent = `${yyyy}-${mm}-${dd}`;
+    })();
+
+    // ===== Theme toggle (simple)
+    function toggleTheme(){
+      // Toggle accent background feel by swapping bg shades
+      const r = document.documentElement;
+      const current = getComputedStyle(r).getPropertyValue("--bg").trim();
+      if(current === "#0b1020"){
+        r.style.setProperty("--bg","#070a14");
+        r.style.setProperty("--card","#0c132a");
+        toast("Mode gelap (lebih pekat).");
+      } else {
+        r.style.setProperty("--bg","#0b1020");
+        r.style.setProperty("--card","#111a33");
+        toast("Mode gelap (default).");
+      }
+    }
+  </script>
+</body>
+</html>
